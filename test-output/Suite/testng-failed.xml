@@ -8,14 +8,11 @@
     <classes>
       <class name="com.Test.EventPageTest">
         <methods>
-          <include name="TearDown"/>
           <include name="validateClocker"/>
+          <include name="TearDown"/>
           <include name="SetUp"/>
           <include name="DownloadFile"/>
           <include name="TestVideoPlayback"/>
-          <include name="TextInfoVerification"/>
-          <include name="setupExtentReports"/>
-          <include name="tearDown"/>
         </methods>
       </class> <!-- com.Test.EventPageTest -->
     </classes>

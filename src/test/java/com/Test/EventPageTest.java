@@ -51,22 +51,9 @@ System.setProperty("webdriver.edge.driver", "C:\\Users\\bikash\\Downloads\\edged
  driver.findElement(By.id("login123")).click();
  driver.findElement(By.name("lemail")).sendKeys("bhargavi@clidiem.com");
  driver.findElement(By.name("lpassword")).sendKeys("Test@12345");
- driver.findElement(By.id("btnSupportLogin")).click();
+ driver.findElement(By.xpath("//button[contains(text(),' Login')]")).click();
  }
    
-   @BeforeMethod
-   public void setupExtentReports() {
-	  
-	     String reportPath = "path/to/extent-report.html";
-       
-       ExtentSparkReporter reporter = new ExtentSparkReporter(reportPath);
-      
-       reporter.config().setTheme(Theme.DARK);
-       
-       extent = new ExtentReports();
-       extent.attachReporter(reporter);
-       
-   }
    
    
  
@@ -76,7 +63,7 @@ System.setProperty("webdriver.edge.driver", "C:\\Users\\bikash\\Downloads\\edged
    
    
    
-@Test
+@Test(priority = 1)
 public void TextInfoVerification() {
     String text1 = "DSA 79 A - All Joined & Virtual Only";
     String text2 = driver.findElement(By.id("h1TopicTitle")).getText();
@@ -95,21 +82,8 @@ public void TextInfoVerification() {
     }
 }
 
-@AfterMethod
-public void tearDown(ITestResult result) {
-    if (ITestResult.FAILURE == result.getStatus()) {
-        captureScreenshot();}
-    }
-    private void captureScreenshot() {
-        if (driver instanceof TakesScreenshot) {
-            TakesScreenshot screenshotDriver = (TakesScreenshot) driver;
-            byte[] screenshot = screenshotDriver.getScreenshotAs(OutputType.BYTES);
 
-            System.out.println("Test Failed. Captured Screenshot!");
-        }
-    driver.quit();
-}
-    @Test
+    @Test (priority = 2)
     
     public void TestVideoPlayback() throws InterruptedException {
     	
@@ -134,7 +108,7 @@ public void tearDown(ITestResult result) {
     
 
    
-   @Test
+   @Test (priority = 4)
 public void validateClocker() {
 	   String[] clockerSelectors = {
         "//h1[@class='allhed']/following-sibling::ul//li[1]",
@@ -176,7 +150,7 @@ public void validateClocker() {
     }
 }
    
-   @Test
+   @Test(priority = 3)
    public void DownloadFile() {
 	   WebElement downloadButton = driver.findElement(By.xpath("//button[contains(text(), 'Download')]"));
        downloadButton.click();

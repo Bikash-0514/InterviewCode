@@ -9,8 +9,6 @@
           <include name="validateClocker"/>
           <include name="SetUp"/>
           <include name="DownloadFile"/>
-          <include name="TestVideoPlayback"/>
-          <include name="TextInfoVerification"/>
           <include name="setupExtentReports"/>
           <include name="tearDown"/>
         </methods>
