@@ -1,18 +1,25 @@
 package com.Test;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
+import org.junit.Assert;
 import org.apache.commons.io.FileUtils;
-
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -30,6 +37,7 @@ import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
+
 
  public class EventPageTest {
 	
@@ -150,29 +158,86 @@ public void validateClocker() {
     }
 }
    
-   @Test(priority = 3)
-   public void DownloadFile() {
-	   WebElement downloadButton = driver.findElement(By.xpath("//button[contains(text(), 'Download')]"));
-       downloadButton.click();
-if(driver.getCurrentUrl().contains("https://etpub.s3.amazonaws.com/Events/Files")) {
-System.out.println("pdf sucessfully opened");
+   
+@Test(priority = 3)
+   public void DownloadFile() throws InterruptedException, IOException {
+
+  
+    driver.findElement(By.xpath("//a[@target='_blank' and @onclick='downloadfile(this)']")).click();
+
+    
+    Thread.sleep(5000); 
+
+   
+    String pdfUrlString = driver.getCurrentUrl();
+
+	Set<String> handles = driver.getWindowHandles();
+	Iterator<String> it = handles.iterator();
+	String PWID = it.next();
+	String CWID = it.next();
+	
+	driver.switchTo().window(CWID);
+	String url = driver.getCurrentUrl();
+	System.out.println("PDF tab url : " + url);
+	
+
+    
+    URL pdfUrl = new URL(pdfUrlString);
+
+    
+    URLConnection urlConnection = pdfUrl.openConnection();
+    urlConnection.addRequestProperty("User-Agent", "Mozilla");
+
+   
+    InputStream inputStream = urlConnection.getInputStream();
+    BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+    
+    PDDocument pdDocument = PDDocument(bufferedInputStream);
+
+    
+    int pageCount = pdDocument.getNumberOfPages();
+    System.out.println("Pages count: " + pageCount);
+    Assert.assertEquals(4, pageCount);
+
+   
+    System.out.println("data of pdf");
+    System.out.println(pdDocument.getVersion());
+    System.out.println(pdDocument.getCurrentAccessPermission().canPrint());
+    System.out.println(pdDocument.getCurrentAccessPermission().isReadOnly());
+    System.out.println(pdDocument.getCurrentAccessPermission().isOwnerPermission());
+    System.out.println(pdDocument.getDocumentInformation().getSubject());
+    System.out.println(pdDocument.getDocumentInformation().getTitle());
+    System.out.println(pdDocument.getDocumentInformation().getCreator());
+    System.out.println(pdDocument.getDocumentInformation().getCreationDate());
+    System.out.println(pdDocument.isEncrypted());
+    System.out.println(pdDocument.getDocumentId());
+
+   
+    PDFTextStripper pdfStripper = new PDFTextStripper();
+    String pdfFullText = pdfStripper.getText(pdDocument);
+    System.out.println(pdfFullText);
+
+   
+    pdDocument.close();
+	
+
+	
+	
+}
+private PDDocument PDDocument(BufferedInputStream bufferedInputStream) {
+	
+	return null;
 }
 
-       
-       File downloadedFile = new File(downloadButton + "https://etpub.s3.amazonaws.com/Events/Files");
-       if (downloadedFile.exists()) {
-           System.out.println("File downloaded successfully.");
-       } else {
-           System.out.println("File download failed.");
-       }
-   }
-   
- 
-   
-   
-   
-    
-    
+
+
+
+
+
+
+
+
 
 @AfterMethod
 public void TearDown() {
